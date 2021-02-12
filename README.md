@@ -6,7 +6,11 @@ Includes advanced options to avoid reloading the whole page, and to avoid
 causing a full Backdrop bootstrap at each refresh.
 
 The easiest way to use this module is to add a Header of type
-"Global: Autorefresh" to your view via Views UI.
+*Global: Autorefresh* to your view via Views UI.
+
+Additionally this module ships with *Global: Request time* - an area that
+displays the time the view has been fetched from the server (with configurable
+date format and text).
 
 ## Installation
 
@@ -15,6 +19,10 @@ Install this module using the [official Backdrop CMS instructions](https://backd
 ## Issues
 
 Bugs and feature requests should be reported in the [Issue Queue](https://github.com/backdrop-contrib/views_autorefresh/issues).
+
+**Known issues:** the current maintainer never used any of the advanced methods
+for refreshing (ping or node.js), so their functionality hasn't been tested with
+Backdrop and might not be working.
 
 ## Current maintainers
 
