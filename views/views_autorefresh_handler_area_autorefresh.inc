@@ -71,9 +71,14 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
       '#title' => t('Interval to check for new items'),
       '#default_value' => $this->options['interval'],
       '#field_suffix' => 'milliseconds',
-      '#required' => TRUE,
-      '#dependency' => array(
-        'edit-options-nodejs' => array(0),
+      '#required' => !module_exists('nodejs'),
+      '#states' => array(
+        'invisible' => array(
+          ':input[name="options[nodejs]"]' => array('checked' => TRUE),
+        ),
+        'required' => array(
+          ':input[name="options[nodejs]"]' => array('checked' => FALSE),
+        ),
       ),
     );
     $form['incremental'] = array(
@@ -101,8 +106,10 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
       '#default_value' => $this->options['display'],
       '#description' => t('Only displays of type page are eligible. Additionally the display must have a timestamp argument of the <em>(with operator)</em> variant. For example <em>Node: Post date (with operator)</em>.'),
       '#options' => $options,
-      '#dependency' => array(
-        'edit-options-incremental' => array(1),
+      '#states' => array(
+        'invisible' => array(
+          ':input[name="options[incremental]"]' => array('checked' => FALSE),
+        ),
       ),
     );
     $form['incremental_advanced'] = array(
@@ -110,10 +117,12 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
       '#title' => t('Advanced'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
-      '#dependency' => array(
-        'edit-options-incremental' => array(1),
-      ),
       '#description' => t('Advanced settings for incremental display. Unless your view is using an overridden template, the defaults below should be fine.'),
+      '#states' => array(
+        'invisible' => array(
+          ':input[name="options[incremental]"]' => array('checked' => FALSE),
+        ),
+      ),
     );
     $form['incremental_advanced']['sourceSelector'] = array(
       '#type' => 'textfield',
@@ -186,8 +195,10 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
       '#title' => t('Path to the ping script'),
       '#default_value' => $this->options['ping_base_path'],
       '#description' => t('This path is relative to the Backdrop root.'),
-      '#dependency' => array(
-        'edit-options-ping' => array(1),
+      '#states' => array(
+        'invisible' => array(
+          ':input[name="options[ping]"]' => array('checked' => FALSE),
+        ),
       ),
     );
     $form['ping_arguments'] = array(
@@ -195,8 +206,10 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
       '#title' => t('Ping arguments'),
       '#default_value' => $this->options['ping_arguments'],
       '#description' => t('A PHP script that generates arguments that will be sent on the ping URL as query parameters. Do not surround with <code>&lt;?php&gt;</code> tag.'),
-      '#dependency' => array(
-        'edit-options-ping' => array(1),
+      '#states' => array(
+        'invisible' => array(
+          ':input[name="options[ping]"]' => array('checked' => FALSE),
+        ),
       ),
     );
     $form['trigger_onload'] = array(
@@ -210,7 +223,7 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
    * Custom validation.
    */
   public function options_validate(&$form, &$form_state) {
-    if (!is_numeric($form_state['values']['options']['interval'])) {
+    if (!$form_state['values']['options']['nodejs'] && !is_numeric($form_state['values']['options']['interval'])) {
       form_set_error('interval', t('Invalid interval.'));
     }
 
