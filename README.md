@@ -22,7 +22,7 @@ Bugs and feature requests should be reported in the [Issue Queue](https://github
 
 **Known issues:** the current maintainer never used any of the advanced methods
 for refreshing (ping or node.js), so their functionality hasn't been tested with
-Backdrop and might not be working.
+Backdrop. The Node.js integration module hasn't been ported to Backdrop (yet).
 
 ## Current maintainers
 
