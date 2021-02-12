@@ -1,10 +1,11 @@
 <?php
-
 /**
+ * @file
  * Base class for area handlers.
  *
  * @ingroup views_area_handlers
  */
+
 class views_autorefresh_handler_area_autorefresh extends views_handler_area {
   /**
    * Overrides views_handler_area::init().
@@ -12,11 +13,14 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
    * Reset override done in views_handler_area::init(). This area must be
    * rendered even if view has no results.
    */
-  function init(&$view, &$options) {
+  public function init(&$view, &$options) {
     parent::init($view, $options);
   }
 
-  function option_definition() {
+  /**
+   * Extend option definitions.
+   */
+  public function option_definition() {
     $options = parent::option_definition();
     $options['interval'] = array('default' => '');
     $options['nodejs'] = array('default' => FALSE, 'bool' => TRUE);
@@ -34,7 +38,7 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
         'oddClass' => array('default' => 'views-row-odd'),
         'evenClass' => array('default' => 'views-row-even'),
         'rowClassPrefix' => array('default' => 'views-row-'),
-      )
+      ),
     );
     $options['ping'] = array('default' => FALSE, 'bool' => TRUE);
     $options['ping_base_path'] = array('default' => '');
@@ -44,7 +48,10 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
     return $options;
   }
 
-  function options_form(&$form, &$form_state) {
+  /**
+   * Custom form items.
+   */
+  public function options_form(&$form, &$form_state) {
     if (module_exists('nodejs')) {
       $form['nodejs'] = array(
         '#type' => 'checkbox',
@@ -199,7 +206,10 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
     );
   }
 
-  function options_validate(&$form, &$form_state) {
+  /**
+   * Custom validation.
+   */
+  public function options_validate(&$form, &$form_state) {
     if (!is_numeric($form_state['values']['options']['interval'])) {
       form_set_error('interval', t('Invalid interval.'));
     }
@@ -219,11 +229,17 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
     }
   }
 
-  function options_submit(&$form, &$form_state) {
+  /**
+   * Custom submit handling.
+   */
+  public function options_submit(&$form, &$form_state) {
     $this->view->display_handler->set_option('use_ajax', TRUE);
   }
 
-  function render($empty = FALSE) {
+  /**
+   * Render output.
+   */
+  public function render($empty = FALSE) {
     $args = array();
     $args['view'] = $this->view;
     $args['nodejs'] = !empty($this->options['nodejs']);
@@ -262,7 +278,10 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
     return theme('views_autorefresh', $args);
   }
 
-  function eval_ping_arguments($script) {
+  /**
+   * Custom method.
+   */
+  public function eval_ping_arguments($script) {
     $args = array();
 
     if (empty($script)) {
@@ -273,7 +292,8 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
     // Make view visible to script.
     $view = $this->view;
 
-    // Avoid Backdrop's error handler: http://www.php.net/manual/en/function.restore-error-handler.php#93261
+    // Avoid Backdrop's error handler.
+    // @see http://www.php.net/manual/en/function.restore-error-handler.php#93261
     set_error_handler(create_function('$errno,$errstr', 'return false;'));
 
     $return = eval($script);
@@ -282,7 +302,7 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
       $error = error_get_last();
       $args = $error['message'];
     }
-    else if (is_array($return)) {
+    elseif (is_array($return)) {
       $args = $return;
     }
     else {

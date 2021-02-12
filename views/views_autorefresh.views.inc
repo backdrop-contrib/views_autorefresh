@@ -1,6 +1,7 @@
 <?php
 /**
  * @file
+ * Views definitions of module Views Auto-Refresh.
  */
 
 /**
