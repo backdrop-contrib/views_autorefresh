@@ -14,7 +14,7 @@ class views_autorefresh_handler_area_requesttime extends views_handler_area {
   /**
    * Additional options.
    */
-  function option_definition() {
+  public function option_definition() {
     $options = parent::option_definition();
 
     $options['content'] = array(
@@ -30,7 +30,7 @@ class views_autorefresh_handler_area_requesttime extends views_handler_area {
   /**
    * Enhance the default form with custom settings.
    */
-  function options_form(&$form, &$form_state) {
+  public function options_form(&$form, &$form_state) {
     $variables = array(
       'items' => array(
         '@requesttime -- the last time this view has been fetched from the server',
@@ -81,7 +81,7 @@ class views_autorefresh_handler_area_requesttime extends views_handler_area {
   /**
    * Find out the information to render.
    */
-  function render($empty = FALSE) {
+  public function render($empty = FALSE) {
     // No results in this view, hide if not set to display on empty results.
     if ($empty && empty($this->options['empty'])) {
       return;
