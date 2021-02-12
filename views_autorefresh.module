@@ -18,6 +18,7 @@ function views_autorefresh_autoload_info() {
     'views_autorefresh_handler_area_autorefresh' => 'views/views_autorefresh_handler_area_autorefresh.inc',
     'views_autorefresh_handler_argument_base' => 'views/views_autorefresh_handler_argument_base.inc',
     'views_autorefresh_handler_argument_date' => 'views/views_autorefresh_handler_argument_date.inc',
+    'views_autorefresh_handler_area_requesttime' => 'views/views_autorefresh_handler_area_requesttime.inc',
   );
 }
 

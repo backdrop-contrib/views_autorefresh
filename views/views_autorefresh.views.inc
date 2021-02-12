@@ -1,9 +1,21 @@
 <?php
+/**
+ * @file
+ */
 
 /**
- * Implementation of hook_views_data_alter().
+ * Implements hook_views_data_alter().
  */
 function views_autorefresh_views_data_alter(&$data) {
+  // @todo is this the right hook?
+  $data['views']['requesttime'] = array(
+    'title' => t('Request time'),
+    'help' => t('Shows the time this view has been fetched from the server.'),
+    'area' => array(
+      'handler' => 'views_autorefresh_handler_area_requesttime',
+    ),
+  );
+
   // @TODO determine if this should go into "if" statement below
   // Add our autorefresh area to Global.
   $data['views']['autorefresh'] = array(
