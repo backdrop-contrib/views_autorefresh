@@ -51,7 +51,6 @@ class views_autorefresh_handler_area_requesttime extends views_handler_area {
     foreach ($date_types as $machine_name => $date_type) {
       $date_formats[$machine_name] = $date_type['label'] . ': ' . format_date(REQUEST_TIME, $machine_name);
     }
-
     $form['date_format'] = array(
       '#type' => 'select',
       '#title' => t('Date format'),
@@ -76,7 +75,6 @@ class views_autorefresh_handler_area_requesttime extends views_handler_area {
 
     parent::options_form($form, $form_state);
   }
-
 
   /**
    * Find out the information to render.
@@ -105,4 +103,5 @@ class views_autorefresh_handler_area_requesttime extends views_handler_area {
     $output = filter_xss_admin(str_replace(array_keys($replacements), array_values($replacements), $content));
     return $output;
   }
+
 }
