@@ -11,6 +11,9 @@
  */
 class views_autorefresh_handler_area_requesttime extends views_handler_area {
 
+  /**
+   * Additional options.
+   */
   function option_definition() {
     $options = parent::option_definition();
 
@@ -18,12 +21,15 @@ class views_autorefresh_handler_area_requesttime extends views_handler_area {
       'default' => 'Last time refreshed: @requesttime',
       'translatable' => TRUE,
     );
-    $options['date_format'] = array('default' => 'short');
+    $options['date_format'] = array('default' => 'html_time');
     $options['custom_date_format'] = array('default' => '');
 
     return $options;
   }
 
+  /**
+   * Enhance the default form with custom settings.
+   */
   function options_form(&$form, &$form_state) {
     $variables = array(
       'items' => array(
@@ -52,12 +58,14 @@ class views_autorefresh_handler_area_requesttime extends views_handler_area {
       '#options' => $date_formats + array(
         'custom' => t('Custom'),
       ),
-      '#default_value' => isset($this->options['date_format']) ? $this->options['date_format'] : 'short',
+      '#default_value' => isset($this->options['date_format']) ? $this->options['date_format'] : 'html_time',
     );
     $form['custom_date_format'] = array(
       '#type' => 'textfield',
       '#title' => t('Custom date format'),
-      '#description' => t('See the <a href="@url" target="_blank">PHP manual</a> for available options.', array('@url' => 'https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters')),
+      '#description' => t('See the <a href="@url" target="_blank">PHP manual</a> for available options.', array(
+        '@url' => 'https://www.php.net/manual/datetime.format.php#refsect1-datetime.format-parameters',
+      )),
       '#default_value' => isset($this->options['custom_date_format']) ? $this->options['custom_date_format'] : '',
       '#states' => array(
         'visible' => array(
@@ -74,18 +82,14 @@ class views_autorefresh_handler_area_requesttime extends views_handler_area {
    * Find out the information to render.
    */
   function render($empty = FALSE) {
-    // Must have options and does not work on summaries.
-    if (!isset($this->options['content']) || $this->view->plugin_name == 'default_summary') {
+    // No results in this view, hide if not set to display on empty results.
+    if ($empty && empty($this->options['empty'])) {
       return;
     }
-    $output = '';
-    $format = $this->options['content'];
 
     // Format date according to settings.
-    // @todo can these ever be empty?
-    // @todo check_plain or validation?
     if ($this->options['date_format'] == 'custom' && !empty($this->options['custom_date_format'])) {
-      $requesttime = format_date(REQUEST_TIME, 'custom', $this->options['custom_date_format']);
+      $requesttime = format_date(REQUEST_TIME, 'custom', check_plain($this->options['custom_date_format']));
     }
     else {
       $requesttime = format_date(REQUEST_TIME, $this->options['date_format']);
@@ -97,7 +101,8 @@ class views_autorefresh_handler_area_requesttime extends views_handler_area {
       $replacements["@$item"] = ${$item};
     }
     // Send the output.
-    $output = filter_xss_admin(str_replace(array_keys($replacements), array_values($replacements), $format));
+    $content = $this->options['content'];
+    $output = filter_xss_admin(str_replace(array_keys($replacements), array_values($replacements), $content));
     return $output;
   }
 }
