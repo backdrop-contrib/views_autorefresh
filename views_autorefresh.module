@@ -6,7 +6,18 @@
 function views_autorefresh_views_api() {
   return array(
     'api' => 3.0,
-    'path' => drupal_get_path('module', 'views_autorefresh') . '/views',
+    'path' => backdrop_get_path('module', 'views_autorefresh') . '/views',
+  );
+}
+
+/**
+ * Implements hook_autoload_info().
+ */
+function views_autorefresh_autoload_info() {
+  return array(
+    'views_autorefresh_handler_area_autorefresh' => 'views/views_autorefresh_handler_area_autorefresh.inc',
+    'views_autorefresh_handler_argument_base' => 'views/views_autorefresh_handler_argument_base.inc',
+    'views_autorefresh_handler_argument_date' => 'views/views_autorefresh_handler_argument_date.inc',
   );
 }
 
@@ -46,8 +57,8 @@ function theme_views_autorefresh($variables) {
   $view_name_id = $view->name . '-' . $view->current_display;
 
   // Add the JavaScript settings.
-  drupal_add_js(drupal_get_path('module', 'views_autorefresh') . '/js/views_autorefresh.js');
-  drupal_add_js(array('views_autorefresh' => array(
+  backdrop_add_js(backdrop_get_path('module', 'views_autorefresh') . '/js/views_autorefresh.js');
+  backdrop_add_js(array('views_autorefresh' => array(
     $view_name_id => array(
       'interval' => $interval,
       'ping' => $ping,
@@ -60,7 +71,7 @@ function theme_views_autorefresh($variables) {
   $timestamp = views_autorefresh_get_timestamp($view);
 
   if ($timestamp) {
-    drupal_add_js(array('views_autorefresh' => array(
+    backdrop_add_js(array('views_autorefresh' => array(
       $view_name_id => array(
         'timestamp' => $timestamp,
       )
@@ -78,13 +89,13 @@ function theme_views_autorefresh($variables) {
   ) {
     $channel = 'views_autorefresh_' . $view_name_id;
 
-    drupal_alter('views_autorefresh_nodejs_channel', $channel, $view);
+    backdrop_alter('views_autorefresh_nodejs_channel', $channel, $view);
 
     nodejs_send_content_channel_token($channel);
   }
 
   // Return link to autorefresh.
-  $query = drupal_get_query_parameters($_REQUEST, array_merge(array('q', 'pass'), array_keys($_COOKIE)));
+  $query = backdrop_get_query_parameters($_REQUEST, array_merge(array('q', 'pass'), array_keys($_COOKIE)));
   $link = l('', $_GET['q'], array('query' => $query));
 
   return '<div class="auto-refresh">' . $link . '</div>';
@@ -240,7 +251,7 @@ function views_autorefresh_nodejs_refresh($views, $context) {
           'view_name' => $view_name,
         );
 
-        drupal_alter('views_autorefresh_nodejs_message', $message, $context);
+        backdrop_alter('views_autorefresh_nodejs_message', $message, $context);
 
         nodejs_send_content_channel_message($message);
       }

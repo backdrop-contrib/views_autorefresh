@@ -2,10 +2,5 @@ name = Views Auto-Refresh
 description = Allows auto-refreshing of Ajax-enabled views.
 package = Views
 dependencies[] = views
-core = 7.x
-php = 5.3
-
-files[] = views/views_autorefresh_handler_argument_base.inc
-files[] = views/views_autorefresh_handler_argument_date.inc
-files[] = views/views_autorefresh_handler_area_autorefresh.inc
-files[] = views_autorefresh.rules.inc
+backdrop = 1.x
+type = module
