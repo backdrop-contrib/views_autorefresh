@@ -12,7 +12,7 @@
 require 'includes/views_autorefresh.inc';
 
 // Defines the root directory.
-define('DRUPAL_ROOT', '/PATH/TO/DRUPAL');
+define('BACKDROP_ROOT', __DIR__ . '../..');
 // Optionally configure cache headers to either 'none', 'skip', or a numeric value (seconds).
 define('CACHE', 'none');
 // Optionally debug. Disable on production.
@@ -49,7 +49,7 @@ function _views_autorefresh_ping_get_updated($timestamp_request, $view_name = ''
 function _views_autorefresh_ping_connect_db() {
   $db = NULL;
   // Optionally change your settings file directory.
-  $settings = DRUPAL_ROOT . '/sites/default/settings.php';
+  $settings = BACKDROP_ROOT . '/settings.php';
 
   if (file_exists($settings)) {
     require $settings;

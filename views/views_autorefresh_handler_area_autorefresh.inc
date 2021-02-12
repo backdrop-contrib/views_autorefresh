@@ -178,7 +178,7 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
       '#type' => 'textfield',
       '#title' => t('Path to the ping script'),
       '#default_value' => $this->options['ping_base_path'],
-      '#description' => t('This path is relative to the Drupal root.'),
+      '#description' => t('This path is relative to the Backdrop root.'),
       '#dependency' => array(
         'edit-options-ping' => array(1),
       ),
@@ -205,7 +205,7 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
     }
 
     if ($form_state['values']['options']['ping']) {
-      $ping_base_path = DRUPAL_ROOT . '/' . $form_state['values']['options']['ping_base_path'];
+      $ping_base_path = BACKDROP_ROOT . '/' . $form_state['values']['options']['ping_base_path'];
 
       if (!file_exists($ping_base_path)) {
         form_set_error('ping_base_path', t('Ping script not found at %path.', array('%path' => $ping_base_path)));
@@ -273,7 +273,7 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
     // Make view visible to script.
     $view = $this->view;
 
-    // Avoid Drupal's error handler: http://www.php.net/manual/en/function.restore-error-handler.php#93261
+    // Avoid Backdrop's error handler: http://www.php.net/manual/en/function.restore-error-handler.php#93261
     set_error_handler(create_function('$errno,$errstr', 'return false;'));
 
     $return = eval($script);

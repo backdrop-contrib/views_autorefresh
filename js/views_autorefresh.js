@@ -2,32 +2,32 @@
   // START jQuery
 
   // Carry over or default.
-  Drupal.views_autorefresh = Drupal.views_autorefresh || {};
+  Backdrop.views_autorefresh = Backdrop.views_autorefresh || {};
 
-  Drupal.behaviors.views_autorefresh = {
+  Backdrop.behaviors.views_autorefresh = {
     attach: function(context, settings) {
       // Close timers on page unload.
       window.addEventListener('unload', function(event) {
-        $.each(Drupal.settings.views_autorefresh, function(index, entry) {
+        $.each(Backdrop.settings.views_autorefresh, function(index, entry) {
           clearTimeout(entry.timer);
         });
       });
 
-      if (Drupal.settings && Drupal.settings.views && Drupal.settings.views.ajaxViews) {
-        var ajax_path = Drupal.settings.views.ajax_path;
+      if (Backdrop.settings && Backdrop.settings.views && Backdrop.settings.views.ajaxViews) {
+        var ajax_path = Backdrop.settings.views.ajax_path;
 
         // If there are multiple views this might've ended up showing up multiple times.
         if (ajax_path.constructor.toString().indexOf('Array') != -1) {
           ajax_path = ajax_path[0];
         }
 
-        $.each(Drupal.settings.views.ajaxViews, function(i, settings) {
+        $.each(Backdrop.settings.views.ajaxViews, function(i, settings) {
           var view_name_id = settings.view_name + '-' + settings.view_display_id;
 
           // Carry over or default.
-          Drupal.views_autorefresh[view_name_id] = Drupal.views_autorefresh[view_name_id] || {};
+          Backdrop.views_autorefresh[view_name_id] = Backdrop.views_autorefresh[view_name_id] || {};
 
-          if (!(view_name_id in Drupal.settings.views_autorefresh)) {
+          if (!(view_name_id in Backdrop.settings.views_autorefresh)) {
             // This view has not got views_autorefresh behavior enabled, so exit
             // early to avoid potential errors.
             return;
@@ -52,13 +52,13 @@
             })
             .each(function() {
               // Set a reference that will work in subsequent calls.
-              Drupal.settings.views_autorefresh[view_name_id].target = this;
+              Backdrop.settings.views_autorefresh[view_name_id].target = this;
 
               // Stop the timer when a user clicks or changes a form element.
-              $('input, select, textarea', Drupal.settings.views_autorefresh[view_name_id].target)
+              $('input, select, textarea', Backdrop.settings.views_autorefresh[view_name_id].target)
                 .click(function () {
-                  if (!Drupal.settings.views_autorefresh[view_name_id].incremental) {
-                    clearTimeout(Drupal.settings.views_autorefresh[view_name_id].timer);
+                  if (!Backdrop.settings.views_autorefresh[view_name_id].incremental) {
+                    clearTimeout(Backdrop.settings.views_autorefresh[view_name_id].timer);
                   }
                 })
                 .change(function () {
@@ -84,17 +84,17 @@
                   // with data specific to the link.
                   $.extend(
                     viewData,
-                    Drupal.Views.parseQueryString(href),
+                    Backdrop.Views.parseQueryString(href),
                     // Extract argument data from the URL.
-                    Drupal.Views.parseViewArgs(href, settings.view_base_path),
+                    Backdrop.Views.parseViewArgs(href, settings.view_base_path),
                     // Settings must be used last to avoid sending url aliases to the server.
                     settings
                   );
 
-                  Drupal.settings.views_autorefresh[view_name_id].view_args = viewData.view_args;
-                  Drupal.settings.views_autorefresh[view_name_id].anchor = this;
+                  Backdrop.settings.views_autorefresh[view_name_id].view_args = viewData.view_args;
+                  Backdrop.settings.views_autorefresh[view_name_id].anchor = this;
 
-                  // Setup the click response with Drupal.ajax.
+                  // Setup the click response with Backdrop.ajax.
                   var element_settings = {
                     url: ajax_path,
                     event: 'click',
@@ -102,24 +102,24 @@
                     submit: viewData
                   };
 
-                  Drupal.settings.views_autorefresh[view_name_id].ajax = new Drupal.ajax(view_name_id, Drupal.settings.views_autorefresh[view_name_id].anchor, element_settings);
+                  Backdrop.settings.views_autorefresh[view_name_id].ajax = new Backdrop.ajax(view_name_id, Backdrop.settings.views_autorefresh[view_name_id].anchor, element_settings);
 
                   // Optionally trigger refresh only once per load.
                   if (
-                    Drupal.settings.views_autorefresh[view_name_id].trigger_onload &&
-                    !Drupal.views_autorefresh[view_name_id].loaded
+                    Backdrop.settings.views_autorefresh[view_name_id].trigger_onload &&
+                    !Backdrop.views_autorefresh[view_name_id].loaded
                   ) {
-                    Drupal.views_autorefresh[view_name_id].loaded = true;
+                    Backdrop.views_autorefresh[view_name_id].loaded = true;
 
                     // Trigger custom event on any plugin that needs to do extra work.
-                    $(Drupal.settings.views_autorefresh[view_name_id].target).trigger('autorefresh_onload', view_name_id);
+                    $(Backdrop.settings.views_autorefresh[view_name_id].target).trigger('autorefresh_onload', view_name_id);
 
-                    Drupal.views_autorefresh.refresh(view_name_id);
+                    Backdrop.views_autorefresh.refresh(view_name_id);
                   }
                   // Activate refresh timer if not using nodejs.
-                  else if (!Drupal.settings.views_autorefresh[view_name_id].nodejs) {
-                    clearTimeout(Drupal.settings.views_autorefresh[view_name_id].timer);
-                    Drupal.views_autorefresh.timer(view_name_id);
+                  else if (!Backdrop.settings.views_autorefresh[view_name_id].nodejs) {
+                    clearTimeout(Backdrop.settings.views_autorefresh[view_name_id].timer);
+                    Backdrop.views_autorefresh.timer(view_name_id);
                   }
                 });
             });
@@ -128,51 +128,51 @@
     }
   };
 
-  Drupal.views_autorefresh.timer = function(view_name_id) {
-    Drupal.settings.views_autorefresh[view_name_id].timer = setTimeout(function() {
-      clearTimeout(Drupal.settings.views_autorefresh[view_name_id].timer);
-      Drupal.views_autorefresh.refresh(view_name_id);
-    }, Drupal.settings.views_autorefresh[view_name_id].interval);
+  Backdrop.views_autorefresh.timer = function(view_name_id) {
+    Backdrop.settings.views_autorefresh[view_name_id].timer = setTimeout(function() {
+      clearTimeout(Backdrop.settings.views_autorefresh[view_name_id].timer);
+      Backdrop.views_autorefresh.refresh(view_name_id);
+    }, Backdrop.settings.views_autorefresh[view_name_id].interval);
   };
 
-  Drupal.views_autorefresh.refresh = function(view_name_id) {
+  Backdrop.views_autorefresh.refresh = function(view_name_id) {
     // Turn off new items class.
-    $('.views-autorefresh-new', Drupal.settings.views_autorefresh[view_name_id].target).removeClass('views-autorefresh-new');
+    $('.views-autorefresh-new', Backdrop.settings.views_autorefresh[view_name_id].target).removeClass('views-autorefresh-new');
 
-    var viewData = Drupal.settings.views_autorefresh[view_name_id].ajax.submit;
+    var viewData = Backdrop.settings.views_autorefresh[view_name_id].ajax.submit;
 
     // Handle secondary view for incremental refresh.
     // @url http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-a-javascript-object
-    if (Drupal.settings.views_autorefresh[view_name_id].incremental) {
+    if (Backdrop.settings.views_autorefresh[view_name_id].incremental) {
       if (!viewData.original_view_data) {
         viewData.original_view_data = $.extend(true, {}, viewData);
       }
 
-      viewData.view_args = (Drupal.settings.views_autorefresh[view_name_id].view_args.length ? Drupal.settings.views_autorefresh[view_name_id].view_args + '/' : '') + Drupal.settings.views_autorefresh[view_name_id].timestamp;
-      viewData.view_base_path = Drupal.settings.views_autorefresh[view_name_id].incremental.view_base_path;
-      viewData.view_display_id = Drupal.settings.views_autorefresh[view_name_id].incremental.view_display_id;
-      viewData.view_name = Drupal.settings.views_autorefresh[view_name_id].incremental.view_name;
+      viewData.view_args = (Backdrop.settings.views_autorefresh[view_name_id].view_args.length ? Backdrop.settings.views_autorefresh[view_name_id].view_args + '/' : '') + Backdrop.settings.views_autorefresh[view_name_id].timestamp;
+      viewData.view_base_path = Backdrop.settings.views_autorefresh[view_name_id].incremental.view_base_path;
+      viewData.view_display_id = Backdrop.settings.views_autorefresh[view_name_id].incremental.view_display_id;
+      viewData.view_name = Backdrop.settings.views_autorefresh[view_name_id].incremental.view_name;
     }
 
     // Overwrite variable.
-    Drupal.settings.views_autorefresh[view_name_id].ajax.submit = viewData;
+    Backdrop.settings.views_autorefresh[view_name_id].ajax.submit = viewData;
 
     // If there's a ping URL, hit it first.
-    if (Drupal.settings.views_autorefresh[view_name_id].ping) {
-      var pingData = { 'timestamp': Drupal.settings.views_autorefresh[view_name_id].timestamp };
+    if (Backdrop.settings.views_autorefresh[view_name_id].ping) {
+      var pingData = { 'timestamp': Backdrop.settings.views_autorefresh[view_name_id].timestamp };
 
-      $.extend(pingData, Drupal.settings.views_autorefresh[view_name_id].ping.ping_args);
+      $.extend(pingData, Backdrop.settings.views_autorefresh[view_name_id].ping.ping_args);
       $.ajax({
-        url: Drupal.settings.basePath + Drupal.settings.views_autorefresh[view_name_id].ping.ping_base_path,
+        url: Backdrop.settings.basePath + Backdrop.settings.views_autorefresh[view_name_id].ping.ping_base_path,
         data: pingData,
         success: function(response) {
           if (response.pong && parseInt(response.pong) > 0) {
-            $(Drupal.settings.views_autorefresh[view_name_id].anchor).trigger('click');
+            $(Backdrop.settings.views_autorefresh[view_name_id].anchor).trigger('click');
             // Trigger custom event on any plugin that needs to do extra work.
-            $(Drupal.settings.views_autorefresh[view_name_id].target).trigger('autorefresh_ping', parseInt(response.pong));
+            $(Backdrop.settings.views_autorefresh[view_name_id].target).trigger('autorefresh_ping', parseInt(response.pong));
           }
-          else if (!Drupal.settings.views_autorefresh[view_name_id].nodejs) {
-            Drupal.views_autorefresh.timer(view_name_id);
+          else if (!Backdrop.settings.views_autorefresh[view_name_id].nodejs) {
+            Backdrop.views_autorefresh.timer(view_name_id);
           }
         },
         error: function(xhr) {},
@@ -180,11 +180,11 @@
       });
     }
     else {
-      $(Drupal.settings.views_autorefresh[view_name_id].anchor).trigger('click');
+      $(Backdrop.settings.views_autorefresh[view_name_id].anchor).trigger('click');
     }
   };
 
-  Drupal.ajax.prototype.commands.viewsAutoRefreshTriggerUpdate = function (ajax, response, status) {
+  Backdrop.ajax.prototype.commands.viewsAutoRefreshTriggerUpdate = function (ajax, response, status) {
     // Trigger custom event on any plugin that needs to do extra work.
     $(response.selector).trigger('autorefresh_update', response.timestamp);
   };
@@ -192,7 +192,7 @@
   // @url http://stackoverflow.com/questions/1394020/jquery-each-backwards
   jQuery.fn.reverse = [].reverse;
 
-  Drupal.ajax.prototype.commands.viewsAutoRefreshIncremental = function (ajax, response, status) {
+  Backdrop.ajax.prototype.commands.viewsAutoRefreshIncremental = function (ajax, response, status) {
     if (response.data) {
       // jQuery removes script tags, so let's mask them now and later unmask.
       // @url http://stackoverflow.com/questions/4430707/trying-to-select-script-tags-from-a-jquery-ajax-get-response/4432347#4432347
@@ -200,18 +200,18 @@
 
       var $view = $(response.selector);
       var view_name_id = response.view_name_id;
-      var emptySelector = Drupal.settings.views_autorefresh[view_name_id].incremental.emptySelector || '.view-empty';
-      var sourceSelector = Drupal.settings.views_autorefresh[view_name_id].incremental.sourceSelector || '.view-content';
+      var emptySelector = Backdrop.settings.views_autorefresh[view_name_id].incremental.emptySelector || '.view-empty';
+      var sourceSelector = Backdrop.settings.views_autorefresh[view_name_id].incremental.sourceSelector || '.view-content';
       var $source = $(response.data).find(sourceSelector).not(sourceSelector + ' ' + sourceSelector).children();
 
       if ($source.size() > 0 && $(emptySelector, $source).size() <= 0) {
-        var targetSelector = Drupal.settings.views_autorefresh[view_name_id].incremental.targetSelector || '.view-content';
+        var targetSelector = Backdrop.settings.views_autorefresh[view_name_id].incremental.targetSelector || '.view-content';
         var $target = $view.find(targetSelector).not(targetSelector + ' ' + targetSelector);
 
         // If initial view was empty, remove the empty divs then add the target div.
         if ($target.size() == 0) {
-          var afterSelector = Drupal.settings.views_autorefresh[view_name_id].incremental.afterSelector || '.view-header';
-          var targetStructure = Drupal.settings.views_autorefresh[view_name_id].incremental.targetStructure || '<div class="view-content"></div>';
+          var afterSelector = Backdrop.settings.views_autorefresh[view_name_id].incremental.afterSelector || '.view-header';
+          var targetStructure = Backdrop.settings.views_autorefresh[view_name_id].incremental.targetStructure || '<div class="view-content"></div>';
 
           if ($(emptySelector, $view).size() > 0) {
             // Replace empty div with content.
@@ -231,15 +231,15 @@
         }
 
         // Remove first, last row classes from items.
-        var firstClass = Drupal.settings.views_autorefresh[view_name_id].incremental.firstClass || 'views-row-first';
-        var lastClass = Drupal.settings.views_autorefresh[view_name_id].incremental.lastClass || 'views-row-last';
+        var firstClass = Backdrop.settings.views_autorefresh[view_name_id].incremental.firstClass || 'views-row-first';
+        var lastClass = Backdrop.settings.views_autorefresh[view_name_id].incremental.lastClass || 'views-row-last';
 
         $target.children().removeClass(firstClass);
         $source.removeClass(lastClass);
 
         // Adjust even-odd classes.
-        var oddClass = Drupal.settings.views_autorefresh[view_name_id].incremental.oddClass || 'views-row-odd';
-        var evenClass = Drupal.settings.views_autorefresh[view_name_id].incremental.evenClass || 'views-row-even';
+        var oddClass = Backdrop.settings.views_autorefresh[view_name_id].incremental.oddClass || 'views-row-odd';
+        var evenClass = Backdrop.settings.views_autorefresh[view_name_id].incremental.evenClass || 'views-row-even';
         var oddness = $target.children(':first').hasClass(oddClass);
 
         $source.filter('.' + oddClass + ', .' + evenClass).reverse().each(function() {
@@ -254,7 +254,7 @@
         });
 
         // Adjust row number classes.
-        var rowClassPrefix = Drupal.settings.views_autorefresh[view_name_id].incremental.rowClassPrefix || 'views-row-';
+        var rowClassPrefix = Backdrop.settings.views_autorefresh[view_name_id].incremental.rowClassPrefix || 'views-row-';
         var rowRegex = new RegExp('views-row-(\\d+)');
 
         $target.children().each(function(i) {
@@ -266,22 +266,22 @@
       }
 
       // Reactivate refresh timer if not using nodejs.
-      if (!Drupal.settings.views_autorefresh[view_name_id].nodejs) {
-        Drupal.views_autorefresh.timer(view_name_id, $('.auto-refresh a', $view), $view);
+      if (!Backdrop.settings.views_autorefresh[view_name_id].nodejs) {
+        Backdrop.views_autorefresh.timer(view_name_id, $('.auto-refresh a', $view), $view);
       }
 
       // Attach behaviors
-      Drupal.attachBehaviors($view);
+      Backdrop.attachBehaviors($view);
     }
   };
 
-  Drupal.Nodejs = Drupal.Nodejs || { callbacks: {} };
+  Backdrop.Nodejs = Backdrop.Nodejs || { callbacks: {} };
 
   // Callback for nodejs message.
-  Drupal.Nodejs.callbacks.viewsAutoRefresh = {
+  Backdrop.Nodejs.callbacks.viewsAutoRefresh = {
     callback: function (message) {
       var view_name_id = message['view_name_id'];
-      Drupal.views_autorefresh.refresh(view_name_id);
+      Backdrop.views_autorefresh.refresh(view_name_id);
     }
   };
 
