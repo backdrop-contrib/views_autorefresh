@@ -1,7 +1,11 @@
 <?php
+/**
+ * @file
+ * Main module code for Views Auto-Refresh.
+ */
 
 /**
- * Implementation of hook_views_api().
+ * Implements hook_views_api().
  */
 function views_autorefresh_views_api() {
   return array(
@@ -23,7 +27,7 @@ function views_autorefresh_autoload_info() {
 }
 
 /**
- * Implementation of hook_theme().
+ * Implements hook_theme().
  */
 function views_autorefresh_theme() {
   return array(
@@ -59,24 +63,28 @@ function theme_views_autorefresh($variables) {
 
   // Add the JavaScript settings.
   backdrop_add_js(backdrop_get_path('module', 'views_autorefresh') . '/js/views_autorefresh.js');
-  backdrop_add_js(array('views_autorefresh' => array(
-    $view_name_id => array(
-      'interval' => $interval,
-      'ping' => $ping,
-      'trigger_onload' => $trigger_onload,
-      'incremental' => $incremental,
-      'nodejs' => $nodejs,
-    )
-  )), 'setting');
+  backdrop_add_js(array(
+    'views_autorefresh' => array(
+      $view_name_id => array(
+        'interval' => $interval,
+        'ping' => $ping,
+        'trigger_onload' => $trigger_onload,
+        'incremental' => $incremental,
+        'nodejs' => $nodejs,
+      ),
+    ),
+  ), 'setting');
 
   $timestamp = views_autorefresh_get_timestamp($view);
 
   if ($timestamp) {
-    backdrop_add_js(array('views_autorefresh' => array(
-      $view_name_id => array(
-        'timestamp' => $timestamp,
-      )
-    )), 'setting');
+    backdrop_add_js(array(
+      'views_autorefresh' => array(
+        $view_name_id => array(
+          'timestamp' => $timestamp,
+        ),
+      ),
+    ), 'setting');
   }
 
   // Signal modules to add their own plugins.
@@ -97,13 +105,19 @@ function theme_views_autorefresh($variables) {
 
   // Return link to autorefresh.
   $query = backdrop_get_query_parameters($_REQUEST, array_merge(array('q', 'pass'), array_keys($_COOKIE)));
-  $link = l('', $_GET['q'], array('query' => $query));
+  $link = l(t('Refresh'), $_GET['q'], array(
+    'query' => $query,
+    'attributes' => array(
+      'class' => array('js-hide'),
+      'rel' => 'nofollow',
+    ),
+  ));
 
   return '<div class="auto-refresh">' . $link . '</div>';
 }
 
 /**
- * Implementation of hook_views_ajax_data_alter().
+ * Implements hook_views_ajax_data_alter().
  */
 function views_autorefresh_views_ajax_data_alter(&$commands, $view) {
   $autorefresh = views_autorefresh_get_settings($view);
@@ -187,7 +201,6 @@ function views_autorefresh_get_timestamp($view) {
         case 'views_autorefresh_handler_argument_date':
           return time();
 
-          break;
         case 'views_autorefresh_handler_argument_base':
           // Fallback to max primary key in view rows.
           // Find the max nid/uid/... of the result set.
@@ -197,7 +210,6 @@ function views_autorefresh_get_timestamp($view) {
 
           return $max_id === ~PHP_INT_MAX ? FALSE : $max_id;
 
-          break;
       }
     }
   }
@@ -209,8 +221,9 @@ function views_autorefresh_get_timestamp($view) {
  * Implements hook_views_pre_render().
  */
 function views_autorefresh_views_pre_render(&$view) {
-  // Reset information about first display instead of the second display (incremental approach only).
-  // @TODO Check if it's necessary to reset any further information
+  // Reset information about first display instead of the second display
+  // (incremental approach only).
+  // @TODO Check if it's necessary to reset any further information.
   $original_view_data = isset($_REQUEST['original_view_data']) ? $_REQUEST['original_view_data'] : array();
   $original_view_display_id = $original_view_data && isset($original_view_data['view_display_id']) ? $original_view_data['view_display_id'] : '';
   $original_view_dom_id = $original_view_data && isset($original_view_data['view_dom_id']) ? $original_view_data['view_dom_id'] : '';

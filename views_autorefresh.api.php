@@ -8,10 +8,10 @@
 /**
  * Alter the node.js channel name for the current view being rendered.
  *
- * @param String &$channel
+ * @param string $channel
  *   Reference to the channel name. The default channel name is passed in
  *   and can be altered.
- * @param Object $view
+ * @param object $view
  *   The current view being rendered.
  */
 function hook_views_autorefresh_nodejs_channel_alter(&$channel, $view) {
@@ -25,12 +25,12 @@ function hook_views_autorefresh_nodejs_channel_alter(&$channel, $view) {
 /**
  * Alter the node.js message that gets sent to a view.
  *
- * @param Object &$message
+ * @param object &$message
  *   A node.js message consisting of:
  *   - channel: the channel name
  *   - callback: the JavaScript node.js callback
  *   - view_name: the name of the view being notified
- * @param Mixed $context
+ * @param mixed $context
  *   Any additional context that the caller cares to send to allow the
  *   message altering hook to perform its logic.
  */
