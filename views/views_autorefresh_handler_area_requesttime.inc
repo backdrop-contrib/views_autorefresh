@@ -42,7 +42,7 @@ class views_autorefresh_handler_area_requesttime extends views_handler_area {
       '#type' => 'textarea',
       '#rows' => 3,
       '#default_value' => $this->options['content'],
-      '#description' => t('You may use HTML code in this field. The following tokens are supported:') . $list,
+      '#description' => t('You may use HTML code in this field. The following placeholders are supported:') . $list,
     );
 
     // Configurable date format.
