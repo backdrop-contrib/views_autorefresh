@@ -1,11 +1,10 @@
 <?php
-
 /**
  * @file
  * Views Auto-Refresh ping script global functions.
  */
 
-/*
+/**
  * Helper function to initialize ping.
  */
 function _views_autorefresh_ping_init($cache = 'skip', $debug = FALSE) {
@@ -29,7 +28,7 @@ function _views_autorefresh_ping_init($cache = 'skip', $debug = FALSE) {
   }
 }
 
-/*
+/**
  * Helper function to output the response.
  */
 function _views_autorefresh_ping_pong($pong, $timestamp_updated, $timestamp_request, $message = '', $cache = 'skip', $debug = FALSE) {
@@ -42,14 +41,16 @@ function _views_autorefresh_ping_pong($pong, $timestamp_updated, $timestamp_requ
   switch ($cache) {
     case 'skip':
       // Leave empty.
-
       break;
+
     case 'none':
       // HTTP headers to prevent caching the result of this call.
-      header('Cache-Control: no-cache, must-revalidate'); // HTTP/1.1.
-      header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past.
-
+      // HTTP/1.1.
+      header('Cache-Control: no-cache, must-revalidate');
+      // Date in the past.
+      header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
       break;
+
     default:
       // Validate seconds.
       if (is_numeric($cache)) {
@@ -73,7 +74,7 @@ function _views_autorefresh_ping_pong($pong, $timestamp_updated, $timestamp_requ
   exit;
 }
 
-/*
+/**
  * Helper function to properly encode characters and prevent attacks.
  *
  * @see check_plain();

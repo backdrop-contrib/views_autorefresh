@@ -13,14 +13,15 @@ require 'includes/views_autorefresh.inc';
 
 // Defines the root directory.
 define('BACKDROP_ROOT', __DIR__ . '../..');
-// Optionally configure cache headers to either 'none', 'skip', or a numeric value (seconds).
+// Optionally configure cache headers to either 'none', 'skip', or a numeric
+// value (seconds).
 define('CACHE', 'none');
 // Optionally debug. Disable on production.
 define('DEBUG', FALSE);
 
 _views_autorefresh_ping_init(CACHE, DEBUG);
 
-/*
+/**
  * Helper function to get updated value.
  */
 function _views_autorefresh_ping_get_updated($timestamp_request, $view_name = '', $view_display_id = '') {
@@ -43,7 +44,7 @@ function _views_autorefresh_ping_get_updated($timestamp_request, $view_name = ''
   return $timestamp_updated;
 }
 
-/*
+/**
  * Helper function to connect to the default database.
  */
 function _views_autorefresh_ping_connect_db() {
