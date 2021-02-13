@@ -104,7 +104,7 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
       '#type' => 'select',
       '#title' => t('Secondary display'),
       '#default_value' => $this->options['display'],
-      '#description' => t('Only displays of type page are eligible. Additionally the display must have a timestamp argument of the <em>(with operator)</em> variant. For example <em>Node: Post date (with operator)</em>.'),
+      '#description' => t('Only displays of type page are eligible. Additionally the display must have a timestamp type Contextual filter <em>(with operator)</em>. For example <em>Content: Post date (with operator)</em>.'),
       '#options' => $options,
       '#states' => array(
         'invisible' => array(

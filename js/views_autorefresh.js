@@ -199,7 +199,7 @@
       response.data = response.data.replace(/<(\/?)script([^>]*)>/gi, '<$1scripttag$2>');
 
       var $view = $(response.selector);
-      var view_name_id = response.view_name_id;
+      var view_name_id = response.view_name;
       var emptySelector = Backdrop.settings.views_autorefresh[view_name_id].incremental.emptySelector || '.view-empty';
       var sourceSelector = Backdrop.settings.views_autorefresh[view_name_id].incremental.sourceSelector || '.view-content';
       var $source = $(response.data).find(sourceSelector).not(sourceSelector + ' ' + sourceSelector).children();

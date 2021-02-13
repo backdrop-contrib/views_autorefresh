@@ -189,9 +189,15 @@ function views_autorefresh_get_timestamp($view) {
   }
 
   $autorefresh_display = $autorefresh['display'];
-  $arguments = isset($view->display[$autorefresh_display]->display_options['arguments']) ?
-    $view->display[$autorefresh_display]->display_options['arguments'] :
-    $view->display['default']->display_options['arguments'];
+  if (isset($view->display[$autorefresh_display]->display_options['arguments'])) {
+    $arguments = $view->display[$autorefresh_display]->display_options['arguments'];
+  }
+  elseif (isset($view->display['default']->display_options['arguments'])) {
+    $arguments = $view->display['default']->display_options['arguments'];
+  }
+  else {
+    $arguments = FALSE;
+  }
 
   if ($arguments) {
     foreach ($arguments as $argument) {
