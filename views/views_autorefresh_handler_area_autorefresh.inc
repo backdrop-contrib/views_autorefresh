@@ -292,6 +292,13 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
   }
 
   /**
+   * Custom error handler.
+   */
+  public function errorHandler($errno, $errstr) {
+    return FALSE;
+  }
+
+  /**
    * Custom method.
    */
   public function eval_ping_arguments($script) {
@@ -307,8 +314,9 @@ class views_autorefresh_handler_area_autorefresh extends views_handler_area {
 
     // Avoid Backdrop's error handler.
     // @see http://www.php.net/manual/en/function.restore-error-handler.php#93261
-    set_error_handler(create_function('$errno,$errstr', 'return false;'));
+    set_error_handler(array($this, 'errorHandler'));
 
+    // @todo Remove the evil.
     $return = eval($script);
 
     if ($return === FALSE) {
