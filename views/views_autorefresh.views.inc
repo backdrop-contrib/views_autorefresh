@@ -48,8 +48,8 @@ function views_autorefresh_views_data_alter(&$data) {
 
       // Add an operator-based argument on the primary field of each base table.
       $field_name = '';
-      if (isset($table_info['table'])) {
-        $field_name = @$table_info['table']['base']['field'];
+      if (isset($table_info['table']) && !empty($table_info['table']['base'])) {
+        $field_name = $table_info['table']['base']['field'];
       }
 
       if (!empty($field_name) && is_string($field_name) && !empty($table_info[$field_name])) {
