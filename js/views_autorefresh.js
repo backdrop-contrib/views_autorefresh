@@ -1,4 +1,5 @@
 (function ($) {
+  "use strict";
   // START jQuery
 
   // Carry over or default.
@@ -7,7 +8,7 @@
   Backdrop.behaviors.views_autorefresh = {
     attach: function(context, settings) {
       // Close timers on page unload.
-      window.addEventListener('unload', function(event) {
+      window.addEventListener('pagehide', function(event) {
         $.each(Backdrop.settings.views_autorefresh, function(index, entry) {
           clearTimeout(entry.timer);
         });
@@ -17,7 +18,7 @@
         var ajax_path = Backdrop.settings.views.ajax_path;
 
         // If there are multiple views this might've ended up showing up multiple times.
-        if (ajax_path.constructor.toString().indexOf('Array') != -1) {
+        if (ajax_path.constructor.toString().indexOf('Array') !== -1) {
           ajax_path = ajax_path[0];
         }
 
@@ -35,7 +36,7 @@
 
           var viewDom = '.view-dom-id-' + settings.view_dom_id;
 
-          if (!$(viewDom).size()) {
+          if (!$(viewDom).length) {
             // Backward compatibility: if 'views-view.tpl.php' is old and doesn't
             // contain the 'view-dom-id-#' class, we fall back to the old way of
             // locating the view:
@@ -48,7 +49,7 @@
             .filter(function() {
               // If there is at least one parent with a view class, this view
               // is nested (e.g., an attachment). Bail.
-              return !$(this).parents('.view').size();
+              return !$(this).parents('.view').length;
             })
             .each(function() {
               // Set a reference that will work in subsequent calls.
@@ -56,14 +57,14 @@
 
               // Stop the timer when a user clicks or changes a form element.
               $('input, select, textarea', Backdrop.settings.views_autorefresh[view_name_id].target)
-                .click(function () {
+                .on('click', function () {
                   if (!Backdrop.settings.views_autorefresh[view_name_id].incremental) {
                     clearTimeout(Backdrop.settings.views_autorefresh[view_name_id].timer);
                   }
                 })
-                .change(function () {
+                .on('change', function () {
                   // Duplicate action.
-                  $(this).click();
+                  $(this).trigger('click');
                 });
 
               $(this)
@@ -204,20 +205,20 @@
       var sourceSelector = Backdrop.settings.views_autorefresh[view_name_id].incremental.sourceSelector || '.view-content';
       var $source = $(response.data).find(sourceSelector).not(sourceSelector + ' ' + sourceSelector).children();
 
-      if ($source.size() > 0 && $(emptySelector, $source).size() <= 0) {
+      if ($source.length > 0 && $(emptySelector, $source).length <= 0) {
         var targetSelector = Backdrop.settings.views_autorefresh[view_name_id].incremental.targetSelector || '.view-content';
         var $target = $view.find(targetSelector).not(targetSelector + ' ' + targetSelector);
 
         // If initial view was empty, remove the empty divs then add the target div.
-        if ($target.size() == 0) {
+        if ($target.length === 0) {
           var afterSelector = Backdrop.settings.views_autorefresh[view_name_id].incremental.afterSelector || '.view-header';
           var targetStructure = Backdrop.settings.views_autorefresh[view_name_id].incremental.targetStructure || '<div class="view-content"></div>';
 
-          if ($(emptySelector, $view).size() > 0) {
+          if ($(emptySelector, $view).length > 0) {
             // Replace empty div with content.
             $(emptySelector, $view).replaceWith(targetStructure);
           }
-          else if ($(afterSelector, $view).size() > 0) {
+          else if ($(afterSelector, $view).length > 0) {
             // Insert content after given div.
             $view.find(afterSelector).not(targetSelector + ' ' + afterSelector).after(targetStructure);
           }
@@ -262,7 +263,7 @@
         });
 
         // Trigger custom event on any plugin that needs to do extra work.
-        $view.trigger('autorefresh_incremental', $source.size());
+        $view.trigger('autorefresh_incremental', $source.length);
       }
 
       // Reactivate refresh timer if not using nodejs.
@@ -280,7 +281,7 @@
   // Callback for nodejs message.
   Backdrop.Nodejs.callbacks.viewsAutoRefresh = {
     callback: function (message) {
-      var view_name_id = message['view_name_id'];
+      var view_name_id = message.view_name_id;
       Backdrop.views_autorefresh.refresh(view_name_id);
     }
   };
